@@ -24,27 +24,27 @@ contract GenericSwap {
 
     mapping (string => Currency) ccys;
 
-    // Types
+    // Types of currency
     enum ccyType{Token, Native}
 
     // Public transaction of alice or bob
     struct TX {
-    address tradingParty;
-    address counterParty;
-    string ccy;
-    uint256 qty;
-    uint expirationDate;
-    uint initDate;
-    bool exist;
-    bool done;
+        address tradingParty;
+        address counterParty;
+        string ccy;
+        uint256 qty;
+        uint expirationDate;
+        uint initDate;
+        bool exist;
+        bool done;
     }
 
     // Currency type for additional tokens in the future
     struct Currency {
-    string name;
-    ccyType cType;
-    address tokenAddress;
-    bool exist;
+        string name;
+        ccyType cType;
+        address tokenAddress;
+        bool exist;
     }
 
     // Events
@@ -138,7 +138,7 @@ contract GenericSwap {
     }
 
     // createTx - internal
-    // Storing the new tx and triggering the Initiated Event
+    // Storing the new tx and triggering the Initiated Event(HTLC)
     //
     // @param ccyName        - the traded token/native currency name
     // @param qty            - the amount to send to the contract
@@ -166,6 +166,8 @@ contract GenericSwap {
         bytes32 hashedPassword = sha256(secret);
         txs[hashedPassword].done = true;
         Currency storage ccy = ccys[txs[hashedPassword].ccy];
+        
+        // check whether it's token or native currency
         if (ccy.cType == ccyType.Token) {
             ERC20 erc = ERC20(ccy.tokenAddress);
             require(erc.transfer(txs[hashedPassword].counterParty, txs[hashedPassword].qty));
@@ -173,11 +175,12 @@ contract GenericSwap {
         else {
             txs[hashedPassword].counterParty.transfer(txs[hashedPassword].qty);
         }
+        // Now the password is publicly available 
         Claimed(txs[hashedPassword].counterParty, txs[hashedPassword].ccy, txs[hashedPassword].qty, secret);
     }
 
     // refund
-    //
+    // in case of refund HTLC
     // @param hashedPassword - sha256 hashed password
     function refund(bytes32 hashedPassword) canRefund(hashedPassword) public {
         txs[hashedPassword].done = true;
