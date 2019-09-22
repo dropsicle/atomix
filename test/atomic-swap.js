@@ -10,11 +10,11 @@ var Qtum = require('../common/engine/Qtum');
 var config = require('../config')
 
 
-var GupContract = artifacts.require("./GUP.sol");
+var tokenContract = artifacts.require("./Token.sol");
 var GenericSwapContract = artifacts.require("./GenericSwap.sol");
 
 
-var GUP;
+var TOKEN;
 var GenericSwap;
 
 function newSecret() {
@@ -56,14 +56,14 @@ contract('Setup', function (accounts) {
     });
 
 
-    describe('Deploy GUP token contract', function () {
-        it("should deploy GUP contract", function (done) {
-            GupContract.new({
+    describe('Deploy token contract', function () {
+        it("should deploy contract", function (done) {
+            tokenContract.new({
                 from: accounts[1]
             }).then(function (_genericSwap) {
                 assert.ok(_genericSwap.address);
-                GUP = _genericSwap;
-                console.log('GUP Token contract created at address', GUP.address);
+                TOKEN = _genericSwap;
+                console.log('Token contract created at address', TOKEN.address);
                 done();
             });
         });
@@ -92,8 +92,8 @@ contract('Setup', function (accounts) {
             })
         });
 
-        it("should add GUP to the GenericSwap contract", function (done) {
-            GenericSwap.addCurrency('Guppy', 'GUP', false, GUP.address,
+        it("should add Token to the GenericSwap contract", function (done) {
+            GenericSwap.addCurrency('Token', 'TKN', false, Token.address,
                 {from: accounts[0]}).then(function (result) {
                 assert.ok(result);
                 done();
@@ -101,7 +101,7 @@ contract('Setup', function (accounts) {
         });
     });
 
-    describe('QTUM <=> GUP rate-1:1', function () {
+    describe('QTUM <=> Token rate-1:1', function () {
 
         before('Should send the trading party trade to QTUM', function (done) {
             var tx = qtum.execute('publish', ['QTUM', 0, secret.hashedSecret,
@@ -119,7 +119,7 @@ contract('Setup', function (accounts) {
 
 
         it('Should send the counter party trade to Ethereum', function (done) {
-            GenericSwap.publish('GUP', 1000, secret.hashedSecret, accounts[0], 60 * 60 * 1000,
+            GenericSwap.publish('Token', 1000, secret.hashedSecret, accounts[0], 60 * 60 * 1000,
                 {from: accounts[1]}).then(v => {
                 assert.ok(v);
                 done();
@@ -127,7 +127,7 @@ contract('Setup', function (accounts) {
         })
 
 
-        it('Should claim GUP funds ', function (done) {
+        it('Should claim Token funds ', function (done) {
             GenericSwap.claim(secret.secret, {from: accounts[0]}).then(v => {
                 assert.ok(v);
                 done();
