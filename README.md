@@ -1,4 +1,4 @@
-# Atomic Cross Chain Trading
+# Dropsicle Atomic Cross Chain Trading
 This repo contains utilities to manually perform cross-chain atomic swaps between erc20 currencies. Currently Qtum, Ethereum, and their erc20 based tokens are supported.
 
 ----
@@ -48,8 +48,8 @@ $ truffle test test/atomic-swap.js
 
 ### TODOs
 
- - Add support for other blockchains
- - Write MORE Tests
+ - Add multiple blockchains support.
+ - tests
  
 
 
