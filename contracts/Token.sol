@@ -2,7 +2,7 @@ pragma solidity ^0.4.16;
 
 interface tokenRecipient { function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData) public; }
 
-contract Gup {
+contract TOKEN {
     // Public variables of the token
     string public name;
     string public symbol;
@@ -25,11 +25,11 @@ contract Gup {
      *
      * Initializes contract with initial supply tokens to the creator of the contract
      */
-    function Gup() public {
-        totalSupply = 100000000 * 10 ** uint256(decimals);  // Update total supply with the decimal amount
+    function TOKEN() public {
+        totalSupply = 10000000000 * 10 ** uint256(decimals);  // Update total supply with the decimal amount
         balanceOf[msg.sender] = totalSupply;                // Give the creator all initial tokens
-        name = "GUPPY";                                   // Set the name for display purposes
-        symbol = "GUP";                               // Set the symbol for display purposes
+        name = "TOKEN";                                   // Set the name for display purposes
+        symbol = "TKN";                               // Set the symbol for display purposes
     }
 
     /**
